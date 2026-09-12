@@ -1,0 +1,17 @@
+{
+  "name": "Lexora Game",
+  "short_name": "Lexora",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c1018",
+  "theme_color": "#0c1018",
+  "description": "Find the words. Keep the journey.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
