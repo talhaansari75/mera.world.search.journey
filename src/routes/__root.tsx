@@ -17,11 +17,25 @@ export const Route = createRootRoute({
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      // Yahan manifest ka rasta theek kar diya hai
+      { rel: "manifest", href: "/manifest.json" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap",
+      },
+    ],
+    // Yahan Service Worker register karne ka code add kiya hai
+    scripts: [
+      {
+        children: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker registered!'))
+                .catch(err => console.log('Service Worker error:', err));
+            });
+          }
+        `,
       },
     ],
   }),
