@@ -15,7 +15,7 @@ import type {
 
 const ENERGY_MAX = 20;
 const ENERGY_MS = 5 * 60 * 1000;
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 
 export const HINT_COST = { first: 10, letter: 20, word: 50 } as const;
 export const AVATARS = ["L", "N", "S", "M", "A", "K", "R", "H"] as const;
