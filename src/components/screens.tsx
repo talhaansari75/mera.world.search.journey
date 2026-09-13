@@ -211,12 +211,12 @@ export function JourneyScreen({
           <div className="grid grid-cols-4 gap-2">
             {Array.from({ length: 8 }, (_, i) => {
               const n = i + 1;
-              const locked = campaignIndex <= CAMPAIGN_COUNT && n > 1 && campaignIndex < CAMPAIGN_COUNT;
+              const locked = campaignIndex < CAMPAIGN_COUNT;
               const lv = legendLevel(n);
               return (
                 <button
                   key={lv.id}
-                  disabled={campaignIndex < CAMPAIGN_COUNT && n > 0 ? campaignIndex < CAMPAIGN_COUNT && n > 4 : false}
+                  disabled={locked}
                   onClick={() => onPlay(sessionFromLevel(lv, "classic"))}
                   className="flex aspect-square flex-col items-center justify-center rounded-2xl bg-surface-2 text-sm"
                 >
