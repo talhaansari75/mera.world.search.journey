@@ -426,9 +426,8 @@ export const useGame = create<GameApi>()(
   }
 },
       resetAll: () => set({ ...blank(), hydrated: true, settings: get().settings }),
-    }),
-    {
-      {
+}),
+{
   name: "lexora-save-v1",
   version: SAVE_VERSION,
 
