@@ -428,9 +428,30 @@ export const useGame = create<GameApi>()(
       resetAll: () => set({ ...blank(), hydrated: true, settings: get().settings }),
     }),
     {
-      name: "lexora-save-v1",
+      {
+  name: "lexora-save-v1",
+  version: SAVE_VERSION,
+
+  migrate: (persistedState, version) => {
+    const base = blank();
+
+    if (!persistedState || typeof persistedState !== "object") {
+      return base;
+    }
+
+    const data = persistedState as Partial<GameSave>;
+
+    return {
+      ...base,
+      ...data,
+      settings: { ...base.settings, ...data.settings },
+      stats: { ...base.stats, ...data.stats },
       version: SAVE_VERSION,
-      storage: createJSONStorage(() => {
+      toast: null,
+    };
+  },
+
+  storage: createJSONStorage(() => {
         if (typeof window === "undefined") {
           return {
             getItem: () => null,
