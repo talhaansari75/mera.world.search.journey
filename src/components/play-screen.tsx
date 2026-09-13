@@ -401,4 +401,4 @@ function HintBtn({
       </span>
     </button>
   );
-    }
+}
