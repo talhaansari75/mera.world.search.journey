@@ -207,7 +207,7 @@ export function PlayScreen({
     (p) => !found.has(p.word),
   );
 
-  const useHint = (kind: "first" | "letter" | "word") => {
+  const handleHint = (kind: "first" | "letter" | "word") => {
     if (endedRef.current || remainingPlacements.length === 0) return;
 
     if (!payHint(kind)) {
@@ -311,21 +311,21 @@ export function PlayScreen({
           icon={<Type className="size-4" />}
           label={t(lang, "hintFirst")}
           cost={hintPacks > 0 ? "pack" : String(HINT_COST.first)}
-          onClick={() => useHint("first")}
+          onClick={() => handleHint("first")}
         />
 
         <HintBtn
           icon={<Lightbulb className="size-4" />}
           label={t(lang, "hintLetter")}
           cost={hintPacks > 0 ? "pack" : String(HINT_COST.letter)}
-          onClick={() => useHint("letter")}
+          onClick={() => handleHint("letter")}
         />
 
         <HintBtn
           icon={<WholeWord className="size-4" />}
           label={t(lang, "hintWord")}
           cost={hintPacks > 0 ? "pack" : String(HINT_COST.word)}
-          onClick={() => useHint("word")}
+          onClick={() => handleHint("word")}
         />
       </div>
 
