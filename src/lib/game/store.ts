@@ -432,7 +432,7 @@ export const useGame = create<GameApi>()(
   name: "lexora-save-v1",
   version: SAVE_VERSION,
 
-  migrate: (persistedState, version) => {
+  migrate: (persistedState, _version) => {
     const base = blank();
 
     if (!persistedState || typeof persistedState !== "object") {
