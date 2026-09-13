@@ -370,24 +370,61 @@ export const useGame = create<GameApi>()(
         return JSON.stringify(blob);
       },
       importSave: (raw) => {
-        try {
-          const data = JSON.parse(raw) as Partial<GameSave>;
-          if (!data || typeof data !== "object") return false;
-          const base = blank();
-          set({
-            ...base,
-            ...data,
-            settings: { ...base.settings, ...data.settings },
-            stats: { ...base.stats, ...data.stats },
-            version: SAVE_VERSION,
-            toast: null,
-            hydrated: true,
-          });
-          return true;
-        } catch {
-          return false;
-        }
-      },
+  try {
+    const data = JSON.parse(raw) as Partial<GameSave>;
+
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      return false;
+    }
+
+    const isFiniteNumber = (value: unknown): value is number =>
+      typeof value === "number" && Number.isFinite(value);
+
+    if (
+      !isFiniteNumber(data.xp) ||
+      data.xp < 0 ||
+      !isFiniteNumber(data.coins) ||
+      data.coins < 0 ||
+      !isFiniteNumber(data.gems) ||
+      data.gems < 0 ||
+      !isFiniteNumber(data.energy) ||
+      data.energy < 0 ||
+      data.energy > ENERGY_MAX ||
+      !isFiniteNumber(data.energyAt) ||
+      !isFiniteNumber(data.campaignIndex) ||
+      data.campaignIndex < 1 ||
+      data.campaignIndex > CAMPAIGN_COUNT ||
+      !isFiniteNumber(data.hintPacks) ||
+      data.hintPacks < 0
+    ) {
+      return false;
+    }
+
+    if (
+      typeof data.name !== "string" ||
+      typeof data.avatar !== "string" ||
+      typeof data.seenTutorial !== "boolean"
+    ) {
+      return false;
+    }
+
+    const base = blank();
+
+    set({
+      ...base,
+      ...data,
+      settings: { ...base.settings, ...data.settings },
+      stats: { ...base.stats, ...data.stats },
+      version: SAVE_VERSION,
+      toast: null,
+      hydrated: true,
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+},
       resetAll: () => set({ ...blank(), hydrated: true, settings: get().settings }),
     }),
     {
