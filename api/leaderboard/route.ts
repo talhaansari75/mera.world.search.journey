@@ -1,18 +1,24 @@
 import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // TODO: Fetch top scores from your database, sorted by score descending
-    const mockLeaderboard = [
-      { userId: 'player_1', score: 1500, level: 5, timestamp: Date.now() },
-      { userId: 'player_2', score: 1200, level: 4, timestamp: Date.now() },
-    ];
+    // Database se top scores fetch karein (highest score sabse upar honge)
+    const leaderboard = await prisma.leaderboardEntry.findMany({
+      orderBy: {
+        score: 'desc',
+      },
+      take: 10, // Top 10 entries
+    });
 
     return NextResponse.json({
       success: true,
-      data: mockLeaderboard,
+      data: leaderboard,
     });
   } catch (error) {
+    console.error('Failed to fetch leaderboard:', error);
     return NextResponse.json(
       { error: 'Failed to fetch leaderboard' },
       { status: 500 }
