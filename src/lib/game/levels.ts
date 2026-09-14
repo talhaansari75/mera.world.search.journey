@@ -1,5 +1,5 @@
+import type { LevelDef, LevelRecord, PlaySession } from "./types";
 import { hashString } from "@/lib/utils";
-import type { LevelDef, PlaySession } from "./types";
 import { CATEGORY_KEYS, CATEGORY_LABEL, WORLD_CATEGORIES, WORLD_META } from "./words";
 
 export const CAMPAIGN_COUNT = 40;
@@ -30,6 +30,23 @@ export function campaignLevel(n: number): LevelDef {
     boss,
     timeLimit,
   };
+}
+
+export function isLevelUnlocked(
+  levelId: string, 
+  campaignIndex: number, 
+  records: Record<string, LevelRecord>
+): boolean {
+  if (levelId === "w1-1") return true;
+  const match = /^w(\d+)-(\d+)$/.exec(levelId);
+  if (!match) return false;
+  const world = Number(match[1]);
+  const stage = Number(match[2]);
+  if (stage === 1) {
+    return campaignIndex >= ((world - 2) * 8 + 8 + 1);
+  }
+  const prevLevelId = `w${world}-${stage - 1}`;
+  return !!records[prevLevelId];
 }
 
 export function allCampaign(): LevelDef[] {
