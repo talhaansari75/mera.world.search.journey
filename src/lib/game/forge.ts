@@ -45,15 +45,23 @@ export const forgeWords = createServerFn({ method: "POST" })
     const jsonEnd = text.lastIndexOf("}");
     if (jsonStart < 0 || jsonEnd < 0) return { ok: false, error: "parse" };
     try {
-      const parsed = JSON.parse(text.slice(jsonStart, jsonEnd + 1)) as {
-        words?: unknown;
+      const rawJson = JSON.parse(text.slice(jsonStart, jsonEnd + 1));
+      
+      // Zod Output Schema Validation
+      const outputSchema = z.object({
+        words: z.array(z.string().regex(/^[A-Z]{4,9}$/)).min(8).max(10),
+      });
+
+      const validated = outputSchema.parse(rawJson);
+      
+      return { 
+        ok: true, 
+        theme, 
+        words: [...new Set(validated.words)] 
       };
-      const words = (Array.isArray(parsed.words) ? parsed.words : [])
-        .map((w) => String(w).toUpperCase().replace(/[^A-Z]/g, ""))
-        .filter((w) => w.length >= 3 && w.length <= 10)
-        .slice(0, 12);
-      if (words.length < 5) return { ok: false, error: "short" };
-      return { ok: true, theme, words: [...new Set(words)] };
+    } catch {
+      return { ok: false, error: "parse" };
+    }
     } catch {
       return { ok: false, error: "parse" };
     }
