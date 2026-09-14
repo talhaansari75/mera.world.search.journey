@@ -62,7 +62,4 @@ export const forgeWords = createServerFn({ method: "POST" })
     } catch {
       return { ok: false, error: "parse" };
     }
-    } catch {
-      return { ok: false, error: "parse" };
-    }
   });
