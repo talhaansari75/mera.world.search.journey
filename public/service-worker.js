@@ -33,7 +33,13 @@ self.addEventListener('activate', (event) => {
 // 3. Fetch Event: Network se lao, agar na mile to cache se do
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-
+const url = new URL(event.request.url);
+  if (
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/auth/")
+  ) {
+    return; // Direct network par jane dein, cache mat karein
+  }
   event.respondWith(
     fetch(event.request)
       .then((response) => {
