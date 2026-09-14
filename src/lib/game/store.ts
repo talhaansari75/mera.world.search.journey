@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { todayKey } from "@/lib/utils";
@@ -16,6 +17,21 @@ import type {
 const ENERGY_MAX = 20;
 const ENERGY_MS = 5 * 60 * 1000;
 const SAVE_VERSION = 1;
+
+// Zod Schema for Save Validation
+const GameSaveSchema = z.object({
+  version: z.number().int().nonnegative(),
+  name: z.string().max(18),
+  avatar: z.string(),
+  xp: z.number().int().nonnegative(),
+  coins: z.number().int().nonnegative(),
+  gems: z.number().int().nonnegative(),
+  energy: z.number().int().nonnegative(),
+  energyAt: z.number(),
+  campaignIndex: z.number().int().nonnegative(),
+  hintPacks: z.number().int().nonnegative(),
+  seenTutorial: z.boolean(),
+});
 
 export const HINT_COST = { first: 10, letter: 20, word: 50 } as const;
 export const AVATARS = ["L", "N", "S", "M", "A", "K", "R", "H"] as const;
@@ -371,20 +387,24 @@ export const useGame = create<GameApi>()(
       },
       importSave: (raw) => {
         try {
-          const data = JSON.parse(raw) as Partial<GameSave>;
-          if (!data || typeof data !== "object") return false;
+          const parsed = JSON.parse(raw);
+          const result = GameSaveSchema.safeParse(parsed);
+          if (!result.success) {
+            set({ toast: "Invalid save file." });
+            return false;
+          }
+          const data = result.data;
           const base = blank();
           set({
             ...base,
             ...data,
-            settings: { ...base.settings, ...data.settings },
-            stats: { ...base.stats, ...data.stats },
             version: SAVE_VERSION,
             toast: null,
             hydrated: true,
           });
           return true;
         } catch {
+          set({ toast: "Invalid save file." });
           return false;
         }
       },
