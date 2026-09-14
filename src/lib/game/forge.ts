@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
 
 export type ForgeResult =
@@ -5,9 +6,12 @@ export type ForgeResult =
   | { ok: false; error: string };
 
 export const forgeWords = createServerFn({ method: "POST" })
-  .validator((input: { theme: string }) => ({
-    theme: String(input?.theme ?? "").slice(0, 80),
-  }))
+ .validator((input: unknown) => {
+  const schema = z.object({
+    theme: z.string().trim().min(2).max(80),
+  });
+  return schema.parse(input);
+})
   .handler(async ({ data }): Promise<ForgeResult> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "unavailable" };
